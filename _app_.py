@@ -1,5 +1,4 @@
-from flask  import Flask
-from flask import render_template
+from flask  import Flask,render_template,request
 
 #アプリオブジェクトの作成
 app = Flask(__name__)
@@ -32,6 +31,12 @@ def greet():
 def fizzbuzz():
     num = 150
     return render_template('fizzbuzz.html',number = num)
+
+@app.route('/get')
+def get():
+    #GETリクエストを格納。nにGETで取得した値を格納し、HTMLに渡しております。
+    n = request.args.get('name')
+    return render_template('get.html',title='Flask GET request'name = n)
 
 if __name__ == "__main__":
     app.run(debug=True)
