@@ -3,13 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>get</title>
+    <!-- <title>hogehoge</title> ここを有効にするとtitleとしてはhogehogeとなり、
+        無効だと_app_.pyで設定したlayout.htmlのtitle変数が反映される内容となる -->
+        <!-- <title>{{title}}</title> -->
 </head>
 <body>
     {% extends "layout.html" %}
     {% block content %}
-    <h3>GET</h3>
-    hello,{{ name }}
-    {% endbloc %}
+    <h3>GET!</h3>
+    <h4>hello,{{ na }}!</h4>
+    {% endblock %}
 </body>
 </html>

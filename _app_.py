@@ -34,9 +34,9 @@ def fizzbuzz():
 
 @app.route('/get')
 def get():
-    #GETリクエストを格納。nにGETで取得した値を格納し、HTMLに渡しております。
-    n = request.args.get('name')
-    return render_template('get.html',title='Flask GET request'name = n)
+    #GETリクエストを格納。nにGETで取得した値を格納し、get.htmlの{{na}}に渡す。
+    n = request.args.get("name") #.get("hoge")ここのhogeは『URL?パラメータ名=値』の所のパラメータ名の部分。
+    return render_template('get.html',title='Flask GET request!',na = n)
 
 if __name__ == "__main__":
     app.run(debug=True)
