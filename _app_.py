@@ -1,18 +1,26 @@
-from flask  import Flask,render_template,request
+from flask  import Flask,render_template,request,redirect,url_for
 import json
 
 #アプリオブジェクトの作成
 app = Flask(__name__)
 
+#プロフィール用jsonファイルのパス
+file_json = "data/profile.json"
+
 def get_profile():
-    #jsonファイルの書き込み
-    file_json = "data/profile.json"
+    #jsonファイルの内容を取得
     with open(file_json,encoding='utf-8') as prof:
         json_str = prof.read()
     
     #json形式から辞書型へ変換
     prof_dict = json.loads(json_str)
     return prof_dict
+
+def update_profile(prof):
+    #edit.htmlに紐づくプロフィールのupdateに関する関数。
+    with open(file_json,"w",encoding='utf-8') as f:
+        json.dump(prof,f) #json.dumpの第一引数、第二引数の関係は？
+    
 
 #ルーティング
 @app.route('/')
@@ -57,7 +65,20 @@ def profile():
 @app.route('/edit')
 def edit():
     prof_dict = get_profile()
-    return render_template('edit.html',title= "json")
+    return render_template('edit.html',title= "json",user=prof_dict)
+
+@app.route('/update',methods=['POST']) #?第二引数の書き方がよくわからん。
+def update():
+    prof_dict = get_profile()
+    #prof_dictの値を変更
+    prof_dict["name"] = request.form["name"]
+    prof_dict['age'] = request.form["age"]
+    prof_dict["sex"] = request.form["sex"]
+
+    # def update_profile(prof):のprofに上記でupdateしたprof_dictの値を代入し、update_profile関数が実行される。
+    update_profile(prof_dict)
+
+    return redirect(url_for("profile")) #url_for( func_name, keyword_args )…特定の関数に対応するURLを生成するメソッド
 
 if __name__ == "__main__":
     app.run(debug=True)
