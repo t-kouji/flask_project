@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document_edit</title>
+</head>
+<body>
+    {% extends "layout.html" %}
+    {% block content %}
+    <h3>プロフィール</h3>
+    <form action="update" method="POST">
+        <ul>
+            <li>名前：<input type="text" name="name" value={{user.name}}></li>
+            <li>年齢：<input type="text" name="age" value={{user.age}}></li>
+            <li>性別：<input type="radio" name ="sex" value={{user.sex}}>男
+                     <input type="radio" name = "sex" value={{user.sex}}>女</li>
+            <input type="subumit" value="更新">
+        </ul>
+    </form>
+    {% endblock %}
+    
+</body>
+</html>
