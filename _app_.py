@@ -54,8 +54,25 @@ def fizzbuzz():
 @app.route('/get')
 def get():
     #GETリクエストを格納。nにGETで取得した値を格納し、get.htmlの{{na}}に渡す。
-    n = request.args.get("name") #.get("hoge")ここのhogeは『URL?パラメータ名=値』の所のパラメータ名の部分。
-    return render_template('get.html',title='Flask GET request!',na = n)
+    if type(request.args.get("number")) == str:
+        number = int(request.args.get("number"))
+        if number == 2:
+            judge = True
+        else:
+            for i in range(2,number):
+                if number % i== 0:
+                    judge = False
+                    break
+                elif number == i+1:
+                    judge = True
+                    break
+
+        return render_template('prime_number.html',title='prime number',ju = judge,nu = number)
+
+
+    else:
+        n = request.args.get("name") #.get("hoge")ここのhogeは『URL?パラメータ名=値』の所のパラメータ名の部分。
+        return render_template('get.html',title='Flask GET request!',na = n)
 
 @app.route('/profile')
 def profile():

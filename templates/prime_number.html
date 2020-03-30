@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <title>hogehoge</title> ここを有効にするとtitleとしてはhogehogeとなり、
+        無効だと_app_.pyで設定したlayout.htmlのtitle変数が反映される内容となる -->
+        <!-- <title>{{title}}</title> -->
+</head>
+<body>
+    {% extends "layout.html" %}
+    {% block content %}
+    <h2>Is the number {{nu}} a prime number??</h2>
+    {% if ju %}
+    <h4>YES!<br>
+        {{nu}} is a prime number !</h4>
+    {% else %}
+    <h4>NO!<br>
+        {{nu}} is not a prime number</h4>
+    {% endif %}
+    {% endblock %}
+</body>
+</html>
