@@ -8,11 +8,12 @@
 <body>
     {% extends "layout.html" %}
     {% block content %}
-    <h3>プロフィール</h3>
+    <h3>プロフィール編集</h3>
     <form action="update" method="POST">
+        <!-- action="hoge"には下記情報をとばすURLを入れる。 -->
         <ul>
-            <li>名前：<input type="text" name="name" value={{user.name}} ></li>
-            <li>年齢：<input type="text" name="age" value={{user.age}} ></li>
+            <li>名前：<input type="text" name="name" value={{user["name"]}}></li>
+            <li>年齢：<input type="text" name="age" value={{user["age"]}}></li>
             <!-- <li>性別：<input type="text" name ="sex" value={{user.sex}} ></li> -->
             <li>性別：<input type="radio" name ="sex" value="男" >男
                      <input type="radio" name = "sex" value="女">女</li>

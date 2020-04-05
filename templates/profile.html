@@ -10,9 +10,12 @@
     {% block content %}
     <h3>プロフィール</h3>
     <ul>
-        <li>名前：{{user.name}}</li>
+        <li>名前：{{user["name"]}}</li>
+        <li>年齢：{{user["age"]}}</li>
+        <li>性別：{{user["sex"]}}</li>
+        <!-- <li>名前：{{user.name}}</li>
         <li>年齢：{{user.age}}</li>
-        <li>性別：{{user.sex}}</li>
+        <li>性別：{{user.sex}}</li> -->
     </ul>
 
     <a href="edit">プロフィールを編集する</a>
