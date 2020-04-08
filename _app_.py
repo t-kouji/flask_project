@@ -84,16 +84,17 @@ def get_func():
 @app.route('/profile')
 def profile_func():
     prof_dict = get_profile()
-    return render_template('profile.html',title= "json",user=prof_dict)
+    return render_template('profile.html',title= "json",users=prof_dict)
 
-@app.route('/edit')
-def edit_func():
+@app.route('/edit/<user>')
+def edit_func(user):
     prof_dict = get_profile()
-    return render_template('edit.html',title= "json",user=prof_dict)
+    return render_template('edit_.html',title= "json",prof_dict = prof_dict,edit_user = user)
 
-@app.route('/update',methods=['POST']) #?第二引数の書き方がよくわからん。
+@app.route('/edit/update',methods=['POST']) #?第二引数の書き方がよくわからん。
 def update_func():
     prof_dict = get_profile()
+    edit_user = request.form['edit_user']
     
     #以下でprof_dictの値を変更
     """htmlのformのデータをうけとるのにrequest.formを使えます。
@@ -101,9 +102,9 @@ def update_func():
     参考→https://qiita.com/nagataaaas/items/3116352da186df102d96
     or https://blog.mktia.com/send-post-request-and-retrieve-it-using-python/"""
     
-    prof_dict["name"] = request.form["name"]
-    prof_dict['age'] = request.form["age"]
-    prof_dict["sex"] = request.form["sex"]
+    prof_dict[edit_user]["name"] = request.form["name"]
+    prof_dict[edit_user]['age'] = request.form["age"]
+    prof_dict[edit_user]["sex"] = request.form["sex"]
 
 
     update_profile(prof_dict)
@@ -112,9 +113,9 @@ def update_func():
 
 
     #url_for( func_name, keyword_args )…特定の関数に対応するURLを生成するメソッド
-    # return redirect(url_for("profile_func"))
-    #↓でも可能。どちらがいいのかわからん。
-    return render_template("profile.html",user=prof_dict)
+    return redirect(url_for("profile_func"))
+    #↓でも可能。ただし、edit_htmlで編集後のURLが"～/update"になる。↑は"～/profile"になる。
+    # return render_template("profile.html",user=prof_dict)
 
 if __name__ == "__main__":
     app.run(debug=True)

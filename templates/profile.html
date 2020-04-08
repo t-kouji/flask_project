@@ -3,22 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document_profile</title>
-</head>
+    <title>profile of all</title>
+</head><h1>みんなのプロフィール</h1>
 <body>
     {% extends "layout.html" %}
     {% block content %}
-    <h3>プロフィール</h3>
+    <h3>ユーザー１</h3>
     <ul>
-        <li>名前：{{user["name"]}}</li>
-        <li>年齢：{{user["age"]}}</li>
-        <li>性別：{{user["sex"]}}</li>
-        <!-- <li>名前：{{user.name}}</li>
-        <li>年齢：{{user.age}}</li>
-        <li>性別：{{user.sex}}</li> -->
+        <li>名前：{{users["user1"]["name"]}}</li>
+        <li>年齢：{{users["user1"]["age"]}}</li>
+        <li>性別：{{users["user1"]["sex"]}}</li>
+        <a href="{{url_for('edit_func',user='user1')}}">プロフィールを編集する</a>
+    </ul>
+    <br>
+    <h3>ユーザー２</h3>
+    <ul>
+        <li>名前：{{users["user2"]["name"]}}</li>
+        <li>年齢：{{users["user2"]["age"]}}</li>
+        <li>性別：{{users["user2"]["sex"]}}</li>
+        <a href="{{url_for('edit_func',user='user2')}}">プロフィールを編集する</a>
+    </ul>
+    <br>
+    <h3>ユーザー３</h3>
+    <ul>
+        <li>名前：{{users["user3"]["name"]}}</li>
+        <li>年齢：{{users["user3"]["age"]}}</li>
+        <li>性別：{{users["user3"]["sex"]}}</li>
+        <a href="{{url_for('edit_func',user='user3')}}">プロフィールを編集する</a>
     </ul>
 
-    <a href="edit">プロフィールを編集する</a>
+
+
+
     {% endblock %}
     
 </body>
