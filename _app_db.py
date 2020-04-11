@@ -1,32 +1,38 @@
 from flask  import Flask,render_template,request,redirect,url_for
-import json
+import sqlite3
 
 #アプリオブジェクトの作成
 app = Flask(__name__)
 
-#プロフィール用jsonファイルのパス
-file_json = "data/profile.json"
-
 def get_profile():
     """
-    "data/profile.json"の内容を取得し、json形式から辞書型へ変更
+    sqliteからデータを取り出す関数
     """
-    with open(file_json,encoding='utf-8') as prof:
-        #jsonファイルの内容を取得
-        # json_str = prof.read()
-        prof_dict = json.load(prof)
-
-        """
-        ↓これでも同じ。「load」でなく「loads」
-        json_str = prof.read()
-        prof_dict = json.loads(json_str) 
-        """
+    #sqlite3のデータベースへ接続する
+    conn = sqlite3.connect('profile.sqlite3')
+    # sqliteを操作するカーソルオブジェクトを作成
+    c = conn.cursor()
+    # executeメソッドでSQL文を実行する
+    for i in c.execute('select * from persons'):
+        prof_dict={'name':i[1],'age':i[2],'sex':i[3]}
+    # データベースへコミット。これで変更が反映される。    
+    conn.commit()
+    # データベースへのコネクションを閉じる。(必須)
+    conn.close
     return prof_dict
 
 def update_profile(prof):
-    #edit.htmlに紐づくプロフィールのupdateに関する関数。
-    with open(file_json,"w",encoding='utf-8') as f:
-        json.dump(prof,f) #json.dumpの第一引数、第二引数の関係は？
+    """
+    sqliteのテーブルを更新する関数
+    """
+    conn = sqlite3.connect('profile.sqlite3')
+    c = conn.cursor()
+    #c.executeの第一引数の?部分に第二引数のタプル内の値が順に入る。
+    #要素が１つのタプルを生成する場合、末尾にカンマが必要
+    c.execute('UPDATE persons SET name=?,age=?,sex=? WHERE id=1',
+    (prof['name'],prof['age'],prof['sex']))
+    conn.commit()
+    conn.close()
     
 
 #ルーティング
@@ -34,10 +40,6 @@ def update_profile(prof):
 def hello_func():
     name = "Hello World"
     return name
-
-# @app.route('/profile')
-# def profile():
-#     return "name:Kouji Tanaka  address:Tokyo"
 
 @app.route('/hive')
 def hive_func():
@@ -60,7 +62,7 @@ def fizzbuzz_func():
 
 @app.route('/get')
 def get_func():
-    #GETリクエストを格納。nにGETで取得した値を格納し、get.htmlの{{na}}に渡す。
+    #GETリクエストを格納。numberにGETで取得した値を格納し、get.htmlの{{na}}に渡す。
     if type(request.args.get("number")) == str:
         number = int(request.args.get("number"))
         if number == 2:
@@ -81,20 +83,20 @@ def get_func():
         n = request.args.get("name") #.get("hoge")ここのhogeは『URL?パラメータ名=値』の所のパラメータ名の部分。
         return render_template('get.html',title='Flask GET request!',na = n)
 
+
 @app.route('/profile')
 def profile_func():
     prof_dict = get_profile()
-    return render_template('profile.html',title= "json",users=prof_dict)
+    return render_template('profile.html',title= "db",user=prof_dict)
 
-@app.route('/edit/<user>')
-def edit_func(user):
+@app.route('/edit')
+def edit_func():
     prof_dict = get_profile()
-    return render_template('edit_.html',title= "json",prof_dict = prof_dict,edit_user = user)
+    return render_template('edit_.html',title= "db",edit_user = prof_dict)
 
-@app.route('/edit/update',methods=['POST']) #?第二引数の書き方がよくわからん。
+@app.route('/update',methods=['POST']) #?第二引数の書き方がよくわからん。
 def update_func():
     prof_dict = get_profile()
-    edit_user = request.form['edit_user']
     
     #以下でprof_dictの値を変更
     """htmlのformのデータをうけとるのにrequest.formを使えます。
@@ -102,9 +104,9 @@ def update_func():
     参考→https://qiita.com/nagataaaas/items/3116352da186df102d96
     or https://blog.mktia.com/send-post-request-and-retrieve-it-using-python/"""
     
-    prof_dict[edit_user]["name"] = request.form["name"]
-    prof_dict[edit_user]['age'] = request.form["age"]
-    prof_dict[edit_user]["sex"] = request.form["sex"]
+    prof_dict["name"] = request.form["name"]
+    prof_dict['age'] = request.form["age"]
+    prof_dict["sex"] = request.form["sex"]
 
 
     update_profile(prof_dict)

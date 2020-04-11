@@ -8,13 +8,12 @@
 <body>
     {% extends "layout.html" %}
     {% block content %}
-    <h3>『{{edit_user}}』 {{prof_dict[edit_user]["name"]}}のプロフィール編集</h3>
+    <h3> {{edit_user["name"]}}のプロフィール編集</h3>
     <form action="update" method="POST">
         <!-- action="hoge"には下記情報をとばすURLを入れる。 -->
         <ul>
-            <li>ユーザー：<input type="text" name="edit_user" value={{edit_user}}></li>
-            <li>名前：<input type="text" name="name" value={{prof_dict[edit_user]["name"]}}></li>
-            <li>年齢：<input type="text" name="age" value={{prof_dict[edit_user]["age"]}}></li>
+            <li>名前：<input type="text" name="name" value={{edit_user.name}}></li>
+            <li>年齢：<input type="text" name="age" value={{edit_user["age"]}}></li>
             <li>性別：<input type="radio" name ="sex" value="男" >男
                      <input type="radio" name = "sex" value="女">女</li>
             <input type="submit" name="" value="更新">
