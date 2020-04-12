@@ -8,17 +8,15 @@
 <body>
     {% extends "layout.html" %}
     {% block content %}
-    <h3>ユーザー１</h3>
+    {% for d in prof_list %}
+    <h3>ユーザーID：{{d.id}}</h3>
     <ul>
-        <li>名前：{{user["name"]}}</li>
-        <li>年齢：{{user["age"]}}</li>
-        <li>性別：{{user["sex"]}}</li>
-        <a href="{{url_for('edit_func')}}">プロフィールを編集する</a>
+        <li>名前：{{d.name}}</li>
+        <li>年齢：{{d.age}}</li>
+        <li>性別：{{d.sex}}</li>
+        <a href="{{url_for('edit_func',edit_user_id=d.id)}}">プロフィールを編集する</a>
     </ul>
+    {% endfor %}
     {% endblock %}
-    
 </body>
 </html>
-
-
-

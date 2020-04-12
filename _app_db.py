@@ -12,14 +12,17 @@ def get_profile():
     conn = sqlite3.connect('profile.sqlite3')
     # sqliteを操作するカーソルオブジェクトを作成
     c = conn.cursor()
+    #prof_listを定義
+    prof_list=[]
     # executeメソッドでSQL文を実行する
     for i in c.execute('select * from persons'):
-        prof_dict={'name':i[1],'age':i[2],'sex':i[3]}
+        # forループの+=で追加していく。
+        prof_list += [{'id':i[0],'name':i[1],'age':i[2],'sex':i[3]}]
     # データベースへコミット。これで変更が反映される。    
     conn.commit()
     # データベースへのコネクションを閉じる。(必須)
     conn.close
-    return prof_dict
+    return prof_list
 
 def update_profile(prof):
     """
@@ -29,8 +32,9 @@ def update_profile(prof):
     c = conn.cursor()
     #c.executeの第一引数の?部分に第二引数のタプル内の値が順に入る。
     #要素が１つのタプルを生成する場合、末尾にカンマが必要
-    c.execute('UPDATE persons SET name=?,age=?,sex=? WHERE id=1',
-    (prof['name'],prof['age'],prof['sex']))
+    c.execute('UPDATE persons SET name=?,age=?,sex=? WHERE id=?',
+    (prof['name'],prof['age'],prof['sex'],prof['id'])
+    )
     conn.commit()
     conn.close()
     
@@ -86,38 +90,28 @@ def get_func():
 
 @app.route('/profile')
 def profile_func():
-    prof_dict = get_profile()
-    return render_template('profile.html',title= "db",user=prof_dict)
+    prof_list = get_profile()
+    return render_template('profile.html',title= "db",prof_list=prof_list)
 
-@app.route('/edit')
-def edit_func():
-    prof_dict = get_profile()
-    return render_template('edit_.html',title= "db",edit_user = prof_dict)
+@app.route('/edit/<edit_user_id>')
+def edit_func(edit_user_id):
+    prof_list = get_profile()
+    for d in prof_list:
+        if d['id'] == int(edit_user_id):
+            return render_template('edit_.html',title= "db",edit_user_dict = d)
 
-@app.route('/update',methods=['POST']) #?第二引数の書き方がよくわからん。
-def update_func():
-    prof_dict = get_profile()
-    
-    #以下でprof_dictの値を変更
-    """htmlのformのデータをうけとるのにrequest.formを使えます。
-    ディクショナリで、key(name)とvalue(データ)をくれます。
-    参考→https://qiita.com/nagataaaas/items/3116352da186df102d96
-    or https://blog.mktia.com/send-post-request-and-retrieve-it-using-python/"""
-    
-    prof_dict["name"] = request.form["name"]
-    prof_dict['age'] = request.form["age"]
-    prof_dict["sex"] = request.form["sex"]
-
-
-    update_profile(prof_dict)
-    # def update_profile(prof):のprofに上記でupdateしたprof_dictの値を代入し、
-    # update_profile関数が実行される。
-
-
+@app.route('/edit/update/<edit_id>',methods=['POST']) #?第二引数の書き方がよくわからん。
+def update_func(edit_id):
+    prof_list = get_profile()
+    for d in prof_list:
+        if d['id'] == int(edit_id):
+            d["name"] = request.form["name"]
+            d['age'] = request.form["age"]
+            d["sex"] = request.form["sex"]
+            update_profile(d)
     #url_for( func_name, keyword_args )…特定の関数に対応するURLを生成するメソッド
     return redirect(url_for("profile_func"))
-    #↓でも可能。ただし、edit_htmlで編集後のURLが"～/update"になる。↑は"～/profile"になる。
-    # return render_template("profile.html",user=prof_dict)
 
 if __name__ == "__main__":
+    print(get_profile())
     app.run(debug=True)
