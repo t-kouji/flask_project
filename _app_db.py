@@ -51,6 +51,20 @@ def add_profile(add_dict_):
     )
     conn.commit()
     conn.close()
+
+def delete_profile(delete_id):
+    """
+    sqliteのテーブルにデータを削除する関数
+    """
+    conn = sqlite3.connect('profile.sqlite3')
+    c = conn.cursor()
+    #c.executeの第一引数の?部分に第二引数のタプル内の値が順に入る。
+    #要素が１つのタプルを生成する場合、末尾にカンマが必要
+    c.execute('DELETE FROM persons WHERE id=?',
+    (delete_id,)
+    )
+    conn.commit()
+    conn.close()
     
 
 #ルーティング
@@ -122,6 +136,11 @@ def add_func():
     #url_for( func_name, keyword_args )…特定の関数に対応するURLを生成するメソッド
     return redirect(url_for("profile_func"))
 
+@app.route('/delete_/<delete_user_id>')
+def delete_func(delete_user_id):
+    delete_profile(int(delete_user_id))
+    return redirect(url_for("profile_func"))
+    
 @app.route('/edit/<edit_user_id>')
 def edit_func(edit_user_id):
     prof_list = get_profile()
