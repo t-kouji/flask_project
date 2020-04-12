@@ -37,6 +37,20 @@ def update_profile(prof):
     )
     conn.commit()
     conn.close()
+
+def add_profile(add_dict_):
+    """
+    sqliteのテーブルにデータを追加する関数
+    """
+    conn = sqlite3.connect('profile.sqlite3')
+    c = conn.cursor()
+    #c.executeの第一引数の?部分に第二引数のタプル内の値が順に入る。
+    #要素が１つのタプルを生成する場合、末尾にカンマが必要
+    c.execute('INSERT INTO persons (name,age,sex) VALUES(?,?,?)',
+    (add_dict_['name'],add_dict_['age'],add_dict_['sex'])
+    )
+    conn.commit()
+    conn.close()
     
 
 #ルーティング
@@ -93,6 +107,21 @@ def profile_func():
     prof_list = get_profile()
     return render_template('profile.html',title= "db",prof_list=prof_list)
 
+@app.route('/add_')
+def add_(): 
+    return render_template('add_.html',title= "add_profile",)
+
+@app.route('/add_/update',methods=['POST']) #?第二引数の書き方がよくわからん。
+def add_func():
+    add_dict = {}
+    add_dict["name"] = request.form["name"]
+    add_dict['age'] = request.form["age"]
+    add_dict["sex"] = request.form["sex"]
+    #add_profile(add_dict_)関数の引数add_dict_に上記add_dictを代入して実行。
+    add_profile(add_dict)
+    #url_for( func_name, keyword_args )…特定の関数に対応するURLを生成するメソッド
+    return redirect(url_for("profile_func"))
+
 @app.route('/edit/<edit_user_id>')
 def edit_func(edit_user_id):
     prof_list = get_profile()
@@ -108,6 +137,7 @@ def update_func(edit_id):
             d["name"] = request.form["name"]
             d['age'] = request.form["age"]
             d["sex"] = request.form["sex"]
+            #update_profile(prof)関数の引数profに上記dを代入して実行。
             update_profile(d)
     #url_for( func_name, keyword_args )…特定の関数に対応するURLを生成するメソッド
     return redirect(url_for("profile_func"))
